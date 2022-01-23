@@ -7,18 +7,7 @@ import { wsAnimeUrl } from "./config/baseUrl";
 
 function App() {
   const ws = new WebSocket(`${wsAnimeUrl}/anime/search`);
-  useEffect(() => {
-    ws.onopen = () => {
-      console.log("open");
-    };
 
-    return () => {
-      ws.close();
-      ws.onclose = () => {
-        console.log("close");
-      };
-    };
-  }, []);
   return (
     <Context.Provider value={{ ws }}>
       <div className="App">

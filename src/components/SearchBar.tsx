@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { Context } from "../config/context";
 
 function SearchBar() {
@@ -6,13 +6,19 @@ function SearchBar() {
   const { ws } = useContext(Context);
   const [result, setResult] = useState<any[]>([]);
 
+  const callback = useCallback((event: MessageEvent<any>) => {
+    setResult((result) => [...result, JSON.parse(event.data)]);
+  }, []);
+
   useEffect(() => {
     if (ws) {
-      ws.onmessage = (event) => {
-        setResult((result) => [...result, JSON.parse(event.data)]);
-      };
+      ws.addEventListener("message", callback);
     }
-  }, []);
+
+    return () => {
+      ws?.removeEventListener("message", callback);
+    };
+  }, [callback]);
   return (
     <div>
       <input
