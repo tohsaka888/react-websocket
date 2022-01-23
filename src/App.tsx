@@ -1,25 +1,41 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect } from "react";
+import logo from "./logo.svg";
+import "./App.css";
+import SearchBar from "./components/SearchBar";
+import { Context } from "./config/context";
+import { wsAnimeUrl } from "./config/baseUrl";
 
 function App() {
+  const ws = new WebSocket(`${wsAnimeUrl}/anime/search`);
+  useEffect(() => {
+    ws.onopen = () => {
+      console.log("open");
+    };
+
+    return () => {
+      ws.close();
+      ws.onclose = () => {
+        console.log("close");
+      };
+    };
+  }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Context.Provider value={{ ws }}>
+      <div className="App">
+        <header className="App-header">
+          <img src={logo} className="App-logo" alt="logo" />
+          <SearchBar />
+          <a
+            className="App-link"
+            href="https://reactjs.org"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Learn React
+          </a>
+        </header>
+      </div>
+    </Context.Provider>
   );
 }
 
